@@ -1,0 +1,32 @@
+﻿@page "/"
+
+<PageTitle>Products</PageTitle>
+
+<ul>
+    @foreach (ModelLibrary.Product product in catelog)
+    {
+        <li>@product.Name - @product.Price</li>
+    }
+</ul>
+
+@code {
+    protected override void OnInitialized()
+    {
+        GetCatelog();
+    }
+
+    private List<ModelLibrary.Product> catelog = new();
+
+    private void GetCatelog()
+    {
+        catelog = new List<ModelLibrary.Product>
+        {
+            new(0, 100, "Vodka", "70%"),
+            new(1, 200, "Gin", "30%"),
+            new(2, 300, "Rum", "50%"),
+            new(3, 400, "Snaps", "80%"),
+            new(4, 500, "Wine", "18%"),
+            new(5, 600, "Moonshine", "96%"),
+        };
+    }
+}
