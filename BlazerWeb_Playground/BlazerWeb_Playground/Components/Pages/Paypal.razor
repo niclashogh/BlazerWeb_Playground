@@ -1,6 +1,10 @@
 ﻿@page "/paypal"
 @attribute [StreamRendering]
 @rendermode InteractiveServer
+
+@using API_Playground.Services;
+@using ModelLibrary;
+
 <PageTitle>Buy with Paypal</PageTitle>
 
 @foreach (ModelLibrary.Product product in catelog)
@@ -29,15 +33,16 @@
     <button @onclick="Buy">Buy</button>
 }
 
+
 @code {
     protected override void OnInitialized()
     {
         GetCatelog();
     }
 
-    private API_Playground.Services.ProductApiService productApiService = new();
-    private List<ModelLibrary.Product> catelog = new();
-    private List<ModelLibrary.Product> basket = new();
+    private ProductApiService productApiService = new();
+    private List<Product> catelog = new();
+    private List<Product> basket = new();
 
     private async void GetCatelog()
     {
