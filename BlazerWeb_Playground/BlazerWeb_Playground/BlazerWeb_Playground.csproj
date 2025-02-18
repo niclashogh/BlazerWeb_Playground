@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\ModelLibrary\ModelLibrary.csproj" />
     <ProjectReference Include="..\BlazerWeb_Playground.Client\BlazerWeb_Playground.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.1" />
+    <PackageReference Include="PayPalServerSDK" Version="0.6.1" />
   </ItemGroup>
 
 </Project>

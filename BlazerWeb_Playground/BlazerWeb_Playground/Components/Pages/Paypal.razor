@@ -1,0 +1,63 @@
+﻿@page "/paypal"
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+<PageTitle>Buy with Paypal</PageTitle>
+
+@foreach (ModelLibrary.Product product in catelog)
+{
+    <ul>
+        <li>
+            @product.Name - @product.Price
+            <button @onclick="() => AddToBasket(product.Id)">Add to basket</button>
+        </li>
+    </ul>
+}
+
+<br />
+
+@if (basket.Count > 0)
+{
+    <h2>Basket</h2>
+    <ul>
+        @foreach (ModelLibrary.Product product in basket)
+        {
+            <li>@product.Name - @product.Price</li>
+        }
+    </ul>
+
+    <br />
+    <button @onclick="Buy">Buy</button>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        GetCatelog();
+    }
+
+    private API_Playground.Services.ProductApiService productApiService = new();
+    private List<ModelLibrary.Product> catelog = new();
+    private List<ModelLibrary.Product> basket = new();
+
+    private async void GetCatelog()
+    {
+        catelog = await productApiService.GetCatelog();
+        this.StateHasChanged();
+    }
+
+    private void AddToBasket(int id)
+    {
+        ModelLibrary.Product? result = catelog.FirstOrDefault(sorting => sorting.Id == id);
+
+        if (result != null)
+        {
+            basket.Add(result);
+            this.StateHasChanged();
+        }
+    }
+
+    private void Buy()
+    {
+
+    }
+}

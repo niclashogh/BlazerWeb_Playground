@@ -3,21 +3,21 @@
     public class Product
     {
         public int Id { get; set; }
-        public double Price { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public double Price { get; set; }
+        public string? Description { get; set; }
 
-        public Product(int id, double price, string name, string desc)
+        public Product(string name, double price, string desc)
         {
-            this.Id = id;
-            this.Price = price;
             this.Name = name;
+            this.Price = price;
             this.Description = desc;
         }
 
-        public Product()
-        {
-            
-        }
+        public Product(string name, double price) : this(name, price, string.Empty) { }
+
+        public Product(string name) : this(name, 0.0, string.Empty) { }
+
+        public Product() { }
     }
 }

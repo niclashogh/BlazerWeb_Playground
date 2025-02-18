@@ -1,10 +1,14 @@
 
+using API_Playground.Services;
+
 namespace API_Playground
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            DatabaseService dbInitialization = new();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -22,12 +26,8 @@ namespace API_Playground
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

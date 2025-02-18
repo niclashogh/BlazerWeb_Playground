@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_Playground.Services;
 using Microsoft.AspNetCore.Mvc;
 using ModelLibrary;
+using SQLite;
 
 namespace API_Playground.Controllers
 {
@@ -8,35 +9,52 @@ namespace API_Playground.Controllers
     [ApiController]
     public class CatelogController : ControllerBase
     {
-        private List<Product> catelog = new List<Product>
-        {
-            new(0, 100, "Vodka", "70%"),
-            new(1, 200, "Gin", "30%"),
-            new(2, 300, "Rum", "50%"),
-            new(3, 400, "Snaps", "80%"),
-            new(4, 500, "Wine", "18%"),
-            new(5, 600, "Moonshine", "96%"),
-        };
-
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<List<Product>> Get()
         {
-            return Ok(catelog);
+            using (var db = new SQLiteConnection(DatabaseService.DatabasePath, SQLiteOpenFlags.ReadOnly))
+            {
+                string selectQuery = "SELECT * FROM Product";
+                List<Product>? products = db.Query<Product>(selectQuery);
+
+                if (products != null && products.Count > 0)
+                {
+                    return Ok(products);
+                }
+                else return NotFound("No products was found");
+            }
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProduct([FromRoute]int id)
+        public ActionResult<Product> GetProduct([FromRoute]int id)
         {
-            Product? product = catelog.FirstOrDefault(sorting => sorting.Id == id);
+            using (var db = new SQLiteConnection(DatabaseService.DatabasePath, SQLiteOpenFlags.ReadOnly))
+            {
+                string selectQuery = $"SELECT * FROM Product WHERE Id = ?";
+                Product? product = db.Query<Product>(selectQuery, id).FirstOrDefault() ?? null;
 
-            if (product == null)
-            {
-                return NotFound("Product not found");
+                if (product != null)
+                {
+                    return Ok(product);
+                }
+                else return NotFound($"No product with the id '{id}' was found");
             }
-            else
-            {
-                return Ok(product);
-            }
+        }
+
+        [HttpGet("test")]
+        public Task<List<Product>> ApiServiceGetCatelog()
+        {
+            ProductApiService pas = new();
+
+            return pas.GetCatelog();
+        }
+
+        [HttpGet("test/{id}")]
+        public Task<Product> ApiServiceGetProduct([FromRoute]int id)
+        {
+            ProductApiService pas = new();
+
+            return pas.GetProduct(id);
         }
     }
 }
