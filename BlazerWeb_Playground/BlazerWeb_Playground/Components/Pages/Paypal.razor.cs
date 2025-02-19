@@ -1,24 +1,41 @@
 ﻿using API_Playground.Services;
 using ModelLibrary;
 using BlazerWeb_Playground.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazerWeb_Playground.Components.Pages
 {
     public partial class Paypal // Manually added by creating new class: name.razor.cs
     {
+        private NavigationManager navigationManager;
+        private ProductApiService productApiService;
+        private PaypalService paypalService = new();
+        private List<Product> catelog = new();
+        private List<Product> basket = new();
+
+        public Paypal(PaypalService paypalService, NavigationManager navManager)
+        {
+            this.paypalService = paypalService;
+            navigationManager = navManager;
+        }
+
         protected override void OnInitialized()
         {
             GetCatelog();
         }
 
-        private ProductApiService productApiService = new();
-        private PaypalService paypalService = new();
-        private List<Product> catelog = new();
-        private List<Product> basket = new();
-
         private async void GetCatelog()
         {
-            catelog = await productApiService.GetCatelog();
+            //catelog = await productApiService.GetCatelog();
+
+            Product p = new("Item 1", 100);
+            p.Id = 0;
+
+            catelog = new List<Product>
+            {
+                p
+            };
+
             this.StateHasChanged();
         }
 
@@ -33,9 +50,21 @@ namespace BlazerWeb_Playground.Components.Pages
             }
         }
 
-        private void Buy()
+        private async Task Buy()
         {
-            paypalService.CreateOrder();
+            double totalPrice = 0;
+
+            foreach (Product product in basket)
+            {
+                totalPrice =+ product.Price;
+            }
+
+            await paypalService.CreateOrder(totalPrice);
+
+            if (!string.IsNullOrEmpty(paypalService.OrderApproveUrl))
+            {
+                navigationManager.NavigateTo(paypalService.OrderApproveUrl, forceLoad: true);
+            }
         }
     }
 }

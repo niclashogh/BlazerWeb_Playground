@@ -53,7 +53,6 @@ namespace API_Playground.Controllers
         public Task<Product> ApiServiceGetProduct([FromRoute]int id)
         {
             ProductApiService pas = new();
-
             return pas.GetProduct(id);
         }
     }

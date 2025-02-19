@@ -4,18 +4,31 @@ using PaypalServerSdk.Standard.Models;
 using PaypalServerSdk.Standard.Authentication;
 using PaypalServerSdk.Standard.Http.Response;
 using PaypalServerSdk.Standard.Exceptions;
-using System.Diagnostics;
 
 namespace BlazerWeb_Playground.Services
 {
-    public class PaypalService
+    public class PaypalService // Toturial at: https://developer.paypal.com/serversdk/http/getting-started/how-to-get-started/
     {
+        #region Variables & Properties
         private PaypalServerSdkClient client;
         private OrdersController orderController;
-        private PaypalWalletCustomer customer;
+        public PaypalWalletCustomer? Customer {  get; private set; }
+        public Order? Order { get; private set; }
+        public string? OrderApproveUrl
+        {
+            get
+            {
+                if (Order != null && Order.Links != null)
+                {
+                    return Order.Links.FirstOrDefault(lnk => lnk.Rel == "approve")?.Href;
+                }
+                else return null;
+            }
+        }
 
         private string oAuthId = "AZS2C2THIQTVFN61Tsi9Y1JJRItVRwPYqpzD6gLdNq5hybhg63_x7sDizgkI4wBddqu2wAQbWTI05GeF";
         private string oAuthSecret = "EH3ruXFrh9-97J2z4FwiUwNkv3YnoDyxT09kQZa2Hqh6xHHU2NAfZk4YNczubhOJZxE0N9xiK1-v8S69";
+        #endregion
 
         public PaypalService()
         {
@@ -30,7 +43,7 @@ namespace BlazerWeb_Playground.Services
             orderController = client.OrdersController;
         }
 
-        public async void CreateOrder()
+        public async Task CreateOrder(double totalPrice)
         {
             OrdersCreateInput order = new OrdersCreateInput
             {
@@ -44,18 +57,17 @@ namespace BlazerWeb_Playground.Services
                         {
                             Amount = new AmountWithBreakdown
                             {
-                                CurrencyCode = "currency_code6",
-                                MValue = "value0"
+                                CurrencyCode = "USD",
+                                MValue = totalPrice.ToString()
                             }
                         }
-                    }//,
+                    },
 
-                    //Payer = new Payer
-                    //{
-                    //    EmailAddress = "",
-                    //    PayerId = "",
-                    //    Phone = new PhoneWithType(new PhoneNumber(""), PhoneType.Mobile)
-                    //}
+                    ApplicationContext = new OrderApplicationContext
+                    {
+                        ReturnUrl = "https://localhost:7142/paypal-receipt",
+                        CancelUrl = "https://localhost:7142/paypal-receipt"
+                    }
                 },
 
                 Prefer = "return=representation"
@@ -63,38 +75,40 @@ namespace BlazerWeb_Playground.Services
 
             try
             {
-                ApiResponse<Order> result = await orderController.OrdersCreateAsync(order);
-                Debug.WriteLine("Result, Header:" + result.Headers);
-                Debug.WriteLine("Result, Data: " + result.Data);
-                Debug.WriteLine("Result, StatusCode: " + result.StatusCode);
+                ApiResponse<Order> response = await orderController.OrdersCreateAsync(order);
+                this.Order = response.Data;
+
+                Console.WriteLine($"\nPaypalService.CreateOrder RESPONSE (OrderId): {response.Data.Id}\n");
             }
             catch (ApiException e)
             {
-
+                Console.WriteLine($"\nPaypalService.CreateOrder ERROR: {e}\n");
             }
         }
 
-        public OrdersConfirmInput ConfirmOrderPayment()
+        public async Task<bool> IsOrderCaptured()
         {
-            return new OrdersConfirmInput
+            if (!string.IsNullOrEmpty(Order.Id))
             {
-                Id = "",
-                Prefer = "return=presentation",
-
-                Body = new ConfirmOrderRequest
+                try
                 {
-                    PaymentSource = new()
-                }
-            };
-        }
+                    OrdersCaptureInput capture = new OrdersCaptureInput { Id = Order.Id };
+                    ApiResponse<Order> response = await orderController.OrdersCaptureAsync(capture);
 
-        public OrdersAuthorizeInput AuthorizaOrder()
-        {
-            return new OrdersAuthorizeInput
-            {
-                Id = "",
-                Prefer = "return=minimal"
-            };
+                    if (response.Data.Status == OrderStatus.Completed)
+                    {
+                        Console.WriteLine($"\nPaypalService.IsOrderCaptued RESPONSE (OrderStatus): {response.Data.Status}\n");
+                        return true;
+                    }
+                    else return false;
+                }
+                catch (ApiException e)
+                {
+                    Console.WriteLine($"PaypalService.IsOrderCaptured ERROR: {e}\n");
+                    return false;
+                }
+            }
+            else return false;
         }
     }
 }

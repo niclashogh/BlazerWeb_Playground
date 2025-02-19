@@ -1,5 +1,6 @@
 using BlazerWeb_Playground.Client.Pages;
 using BlazerWeb_Playground.Components;
+using BlazerWeb_Playground.Services;
 
 namespace BlazerWeb_Playground
 {
@@ -13,6 +14,8 @@ namespace BlazerWeb_Playground
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
+
+            builder.Services.AddScoped<PaypalService>();
 
             var app = builder.Build();
 
