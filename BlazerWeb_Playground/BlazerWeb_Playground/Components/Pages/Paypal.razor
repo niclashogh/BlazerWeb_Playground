@@ -33,7 +33,7 @@
     <button @onclick="Buy">Buy</button>
 }
 
-
+@* 
 @code {
     protected override void OnInitialized()
     {
@@ -52,7 +52,7 @@
 
     private void AddToBasket(int id)
     {
-        ModelLibrary.Product? result = catelog.FirstOrDefault(sorting => sorting.Id == id);
+        Product? result = catelog.FirstOrDefault(sorting => sorting.Id == id);
 
         if (result != null)
         {
@@ -66,3 +66,4 @@
 
     }
 }
+ *@
