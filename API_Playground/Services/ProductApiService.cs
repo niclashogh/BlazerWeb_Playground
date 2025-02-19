@@ -28,7 +28,7 @@ namespace API_Playground.Services
                 }
                 else return new();
             }
-            else return new();
+            else return new(); // Could log statuscode
         }
 
         public async Task<Product> GetProduct(int id)
@@ -47,7 +47,7 @@ namespace API_Playground.Services
                 }
                 else return new();
             }
-            else return new();
+            else return new(); // Could log statuscode
         }
     }
 }
