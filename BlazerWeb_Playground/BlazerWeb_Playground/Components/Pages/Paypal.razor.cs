@@ -1,5 +1,6 @@
 ﻿using API_Playground.Services;
 using ModelLibrary;
+using BlazerWeb_Playground.Services;
 
 namespace BlazerWeb_Playground.Components.Pages
 {
@@ -11,6 +12,7 @@ namespace BlazerWeb_Playground.Components.Pages
         }
 
         private ProductApiService productApiService = new();
+        private PaypalService paypalService = new();
         private List<Product> catelog = new();
         private List<Product> basket = new();
 
@@ -33,7 +35,7 @@ namespace BlazerWeb_Playground.Components.Pages
 
         private void Buy()
         {
-
+            paypalService.CreateOrder();
         }
     }
 }
