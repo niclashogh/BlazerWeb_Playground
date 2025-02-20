@@ -7,7 +7,10 @@ using PaypalServerSdk.Standard.Exceptions;
 
 namespace BlazerWeb_Playground.Services
 {
-    public class PaypalService // Toturial at: https://developer.paypal.com/serversdk/http/getting-started/how-to-get-started/
+    // Sandbox: https://developer.paypal.com/dashboard/applications/sandbox
+    // Toturial at: https://developer.paypal.com/serversdk/http/getting-started/how-to-get-started/
+
+    public class PaypalService
     {
         #region Variables & Properties
         private PaypalServerSdkClient client;

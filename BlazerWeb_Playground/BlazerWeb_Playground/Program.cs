@@ -1,3 +1,4 @@
+using API_Playground.Services;
 using BlazerWeb_Playground.Client.Pages;
 using BlazerWeb_Playground.Components;
 using BlazerWeb_Playground.Services;
@@ -16,6 +17,7 @@ namespace BlazerWeb_Playground
                 .AddInteractiveWebAssemblyComponents();
 
             builder.Services.AddScoped<PaypalService>();
+            builder.Services.AddScoped<ProductApiService>();
 
             var app = builder.Build();
 

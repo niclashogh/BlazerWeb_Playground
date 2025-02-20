@@ -13,10 +13,11 @@ namespace BlazerWeb_Playground.Components.Pages
         private List<Product> catelog = new();
         private List<Product> basket = new();
 
-        public Paypal(PaypalService paypalService, NavigationManager navManager)
+        public Paypal(PaypalService paypalService, ProductApiService productApiService, NavigationManager navManager)
         {
             this.paypalService = paypalService;
-            navigationManager = navManager;
+            this.productApiService = productApiService;
+            this.navigationManager = navManager;
         }
 
         protected override void OnInitialized()
