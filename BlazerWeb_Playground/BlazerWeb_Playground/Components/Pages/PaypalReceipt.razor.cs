@@ -21,7 +21,10 @@ namespace BlazerWeb_Playground.Components.Pages
 
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var orderId))
             {
-                await paypalService.CaptureOrder(orderId);
+                if (await paypalService.CaptureOrder(orderId))
+                {
+                    // show/create a receipt on the page (inject from paypal page)
+                }
             }
         }
     }
