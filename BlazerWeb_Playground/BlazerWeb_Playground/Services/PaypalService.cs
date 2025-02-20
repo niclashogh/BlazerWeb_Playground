@@ -77,38 +77,54 @@ namespace BlazerWeb_Playground.Services
             {
                 ApiResponse<Order> response = await orderController.OrdersCreateAsync(order);
                 this.Order = response.Data;
-
-                Console.WriteLine($"\nPaypalService.CreateOrder RESPONSE (OrderId): {response.Data.Id}\n");
+                ConsoleLog(response, "CreateOrder");
             }
             catch (ApiException e)
             {
-                Console.WriteLine($"\nPaypalService.CreateOrder ERROR: {e}\n");
+                Console.WriteLine($"\nPaypalService.CreateOrder ERROR:\n{e}\n");
             }
         }
 
-        public async Task<bool> IsOrderCaptured()
+        public async Task<bool> CaptureOrder(string orderId)
         {
-            if (!string.IsNullOrEmpty(Order.Id))
+            if (!string.IsNullOrEmpty(orderId))
             {
                 try
                 {
-                    OrdersCaptureInput capture = new OrdersCaptureInput { Id = Order.Id };
-                    ApiResponse<Order> response = await orderController.OrdersCaptureAsync(capture);
-
-                    if (response.Data.Status == OrderStatus.Completed)
+                    OrdersCaptureInput capture = new OrdersCaptureInput
                     {
-                        Console.WriteLine($"\nPaypalService.IsOrderCaptued RESPONSE (OrderStatus): {response.Data.Status}\n");
-                        return true;
-                    }
-                    else return false;
+                        Id = orderId,
+                        Prefer = "return=representation"
+                    };
+
+                    ApiResponse<Order> response = await orderController.OrdersCaptureAsync(capture);
+                    ConsoleLog(response, "CaptureOrder");
+                    return true;
                 }
                 catch (ApiException e)
                 {
-                    Console.WriteLine($"PaypalService.IsOrderCaptured ERROR: {e}\n");
+                    Console.WriteLine($"\nPaypalService.CaptureOrder ERROR:\n{e}\n");
                     return false;
                 }
             }
-            else return false;
+            else
+            {
+                Console.WriteLine($"\nPaypalService.CaptureOrder: orderId is null\n");
+                return false;
+            }
+        }
+
+        private void ConsoleLog(ApiResponse<Order> response, string parentMethodName)
+        {
+            Console.WriteLine($"\nPaypalService.{parentMethodName} RESPONSE\n" +
+                    $"HTTP StatusCode: {response.StatusCode}\n" +
+                    $"OrderId: {response.Data.Id}\n" +
+                    $"Order Status: {response.Data.Status}");
+
+            foreach (LinkDescription link in  response.Data.Links)
+            {
+                Console.WriteLine($"{link.Rel}: {link.Href}\n");
+            }
         }
     }
 }

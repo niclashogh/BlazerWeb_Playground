@@ -9,7 +9,7 @@ namespace BlazerWeb_Playground.Components.Pages
     {
         private NavigationManager navigationManager;
         private ProductApiService productApiService;
-        private PaypalService paypalService = new();
+        private PaypalService paypalService;
         private List<Product> catelog = new();
         private List<Product> basket = new();
 
@@ -26,16 +26,7 @@ namespace BlazerWeb_Playground.Components.Pages
 
         private async void GetCatelog()
         {
-            //catelog = await productApiService.GetCatelog();
-
-            Product p = new("Item 1", 100);
-            p.Id = 0;
-
-            catelog = new List<Product>
-            {
-                p
-            };
-
+            catelog = await productApiService.GetCatelog();
             this.StateHasChanged();
         }
 
@@ -56,7 +47,7 @@ namespace BlazerWeb_Playground.Components.Pages
 
             foreach (Product product in basket)
             {
-                totalPrice =+ product.Price;
+                totalPrice += product.Price;
             }
 
             await paypalService.CreateOrder(totalPrice);
