@@ -41,7 +41,7 @@ namespace API_Playground.Controllers
             }
         }
 
-        [HttpGet("test")]
+        [HttpGet("pas")]
         public Task<List<Product>> ApiServiceGetCatelog()
         {
             ProductApiService pas = new();
@@ -49,7 +49,7 @@ namespace API_Playground.Controllers
             return pas.GetCatelog();
         }
 
-        [HttpGet("test/{id}")]
+        [HttpGet("pas/{id}")]
         public Task<Product> ApiServiceGetProduct([FromRoute]int id)
         {
             ProductApiService pas = new();
