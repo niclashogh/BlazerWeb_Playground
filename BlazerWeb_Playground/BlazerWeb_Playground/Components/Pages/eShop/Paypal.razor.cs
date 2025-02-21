@@ -3,7 +3,7 @@ using ModelLibrary;
 using BlazerWeb_Playground.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazerWeb_Playground.Components.Pages
+namespace BlazerWeb_Playground.Components.Pages.eShop
 {
     public partial class Paypal // Manually added by creating new class: name.razor.cs
     {
@@ -17,7 +17,7 @@ namespace BlazerWeb_Playground.Components.Pages
         {
             this.paypalService = paypalService;
             this.productApiService = productApiService;
-            this.navigationManager = navManager;
+            navigationManager = navManager;
         }
 
         protected override void OnInitialized()
@@ -51,11 +51,12 @@ namespace BlazerWeb_Playground.Components.Pages
                 totalPrice += product.Price;
             }
 
-            await paypalService.CreateOrder(totalPrice);
-
-            if (!string.IsNullOrEmpty(paypalService.OrderApproveUrl))
+            if (await paypalService.CreateOrder(totalPrice))
             {
-                navigationManager.NavigateTo(paypalService.OrderApproveUrl, forceLoad: true);
+                if (!string.IsNullOrEmpty(paypalService.OrderApproveUrl))
+                {
+                    navigationManager.NavigateTo(paypalService.OrderApproveUrl, forceLoad: true);
+                }
             }
         }
     }

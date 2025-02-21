@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace BlazerWeb_Playground.Components.Pages
+namespace BlazerWeb_Playground.Components.Pages.eShop
 {
     public partial class PaypalReceipt
     {
@@ -12,7 +12,7 @@ namespace BlazerWeb_Playground.Components.Pages
         public PaypalReceipt(PaypalService paypalService, NavigationManager navManager)
         {
             this.paypalService = paypalService;
-            this.navigationManager = navManager;
+            navigationManager = navManager;
         }
 
         protected override async void OnInitialized()

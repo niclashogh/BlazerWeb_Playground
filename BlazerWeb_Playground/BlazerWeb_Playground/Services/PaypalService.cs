@@ -46,7 +46,7 @@ namespace BlazerWeb_Playground.Services
             orderController = client.OrdersController;
         }
 
-        public async Task CreateOrder(double totalPrice)
+        public async Task<bool> CreateOrder(double totalPrice)
         {
             OrdersCreateInput order = new OrdersCreateInput
             {
@@ -81,10 +81,12 @@ namespace BlazerWeb_Playground.Services
                 ApiResponse<Order> response = await orderController.OrdersCreateAsync(order);
                 this.Order = response.Data;
                 ConsoleLog(response, "CreateOrder");
+                return true;
             }
             catch (ApiException e)
             {
                 Console.WriteLine($"\nPaypalService.CreateOrder ERROR:\n{e}\n");
+                return false;
             }
         }
 

@@ -16,8 +16,9 @@ namespace BlazerWeb_Playground
                 .AddInteractiveServerComponents()
                 .AddInteractiveWebAssemblyComponents();
 
-            builder.Services.AddScoped<PaypalService>();
             builder.Services.AddScoped<ProductApiService>();
+            builder.Services.AddScoped<PaypalService>();
+            builder.Services.AddScoped<MobilPayService>();
 
             var app = builder.Build();
 
